@@ -5,9 +5,14 @@
 #include <iostream>
 #include <vector>
 
+class TextureManager;
 class Game
 {
 public:
+
+    int SCREEN_WIDTH = 1536;
+    int SCREEN_HEIGHT = 768;
+    int x_pos, y_pos;
 
     Game();
     ~Game();
@@ -18,12 +23,16 @@ public:
 	void update();
 	void render();
 	void clean();
+	void Start();
 
 	bool running() { return isRunning; }
-
+    static SDL_Renderer* renderer;
 private:
+
     bool isRunning = false;
+    int srcRect_w,srcRect_h;
     SDL_Window* window;
-    SDL_Renderer* renderer;
+
+    SDL_Event event;
 
 };
