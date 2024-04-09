@@ -7,7 +7,7 @@ public:
     Map();
     ~Map();
 
-    void LoadMap(int arr[24][48]);
+    void LoadMap(const char* filepath);
     void DrawMap();
 
 private:
