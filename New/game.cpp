@@ -1,20 +1,20 @@
 #include "Game.hpp"
-#include "TextureManager.hpp"
-#include "GameObject.hpp"
-#include "Map.hpp"
 
 GameObject* background;
 GameObject* startgame;
 GameObject* ground;
-//GameObject* grass;
 GameObject* turtle;
 GameObject* turtlerun;
 GameObject* ogre;
+GameObject* box;
+GameObject* nonogram;
 
 Map* _map;
+Map* _mapNgram;
+
+GameNgram* Ngram;
 
 SDL_Renderer* Game::renderer = nullptr;
-
 
 Game::Game()
 {}
@@ -50,29 +50,87 @@ void Game::initSDL(const char* WINDOW_TITLE, int x_pos, int y_pos, int SCREEN_WI
     }
     else logErrorAndExit("CreateRenderer", SDL_GetError());
 
-    isRunning = true;
-
-    /*SDL_Surface *bgr= IMG_Load("Game Graphics/bgr.jpg");
-    background = SDL_CreateTextureFromSurface(renderer, bgr);
-    SDL_FreeSurface(bgr);*/
-
     background = new GameObject("Game Graphics/newbackground1.png",0,0,1536,768);
-    startgame = new GameObject("Game Graphics/startgame.png",330,430,300,200);
-
-    Start();
+    startgame = new GameObject("Game Graphics/playgame.png",620,380,200,90);
 
     ground = new GameObject("Game Graphics/ground.png",0,0,1536,768);
     //grass = new GameObject("Game Graphics/grass/Asset 1.png",-1,-1,32,30);
     turtle = new GameObject("Game Graphics/Character/turtle.png",0,100,65,52);
     turtlerun = new GameObject("Game Graphics/Character/run.png",260,500,50,52);
     ogre = new GameObject("Game Graphics/Character/ogre.png",-10,650,55,58);
-
+    box = new GameObject("Game Graphics/Box.png",100,100,61,68);
+    nonogram = new GameObject("Game Graphics/nonogram.png",600,200,525,525);
     _map = new Map();
+    _mapNgram = new Map();
 
+}
+
+void Game::Start()
+{
+    background->Update();
+    startgame->Update();
+
+    background->Render();
+    startgame->Render();
+
+	SDL_RenderPresent(renderer);
+	while(SDL_PollEvent(&event)){
+        switch (event.type)
+        {
+            case SDL_QUIT :
+                isRunning = false;
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                SDL_GetMouseState(&mouse_x, &mouse_y);
+
+                if(event.button.button == SDL_BUTTON_LEFT){
+                    if(mouse_x >= startgame->getX() && mouse_x <= startgame->getX() + startgame->getWidth() &&
+                   mouse_y >= startgame->getY() && mouse_y <= startgame->getY() + startgame->getHeight()){
+                       isRunning = true;
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+	}
+}
+
+void Game::update()
+{
+    ground->Update();
+    turtle->Update();
+    turtlerun->Update();
+    ogre->Update();
+    turtlerun->x_pos+=2;
+    turtlerun->y_pos--;
+    ogre->x_pos+=2;
+    ogre->y_pos--;
+    box->Update();
+
+    nonogram->Update();
+
+    turtle->HandleMove();
+}
+void Game::render()
+{
+	SDL_RenderClear(renderer);
+    ground->Render();
+
+    _map->DrawMap();
+    //_map->DrawNgram(0,0,0);
+    turtle->Render();
+    turtlerun->Render();
+    ogre->Render();
+    box->Render();
+    //nonogram->Render();
+    //nonogram->Render();
+	SDL_RenderPresent(renderer);
 }
 void Game::handleEvents()
 {
-    while (SDL_PollEvent(&event)) {
+    //while (SDL_PollEvent(&event)) {
+    SDL_PollEvent(&event);
         switch (event.type)
         {
             case SDL_QUIT :
@@ -96,74 +154,34 @@ void Game::handleEvents()
                     default:
                         break;
                     }
-            case SDL_KEYUP:
                 break;
+            case SDL_MOUSEBUTTONDOWN:
+                SDL_GetMouseState(&mouse_x, &mouse_y);
+
+                if(event.button.button == SDL_BUTTON_LEFT){
+                   if(mouse_x >= box->getX() && mouse_x <= box->getX() + box->getWidth() && mouse_y >= box->getY() && mouse_y <= box->getY() + box->getHeight())
+                    {
+                        while(isNonogram){
+                            nonogram->Render();
+                            SDL_RenderPresent(renderer);
+                            Ngram->Ngram();
+                        }
+                        std::cout << "nonogram";
+                        std::cout << "run" << std::endl;
+                        isRunning = false;
+                   }
+                }
+                break;
+
             default:
                 break;
         }
-    }
+    //}
 }
-
-
-//int cnt=0;
-void Game::update()
-{
-   /* cnt++;
-
-    destR.w = 128;
-    destR.h = 128;
-    destR.x=cnt;
-
-    std::cout  << cnt << std::endl;*/
-    //background->Update();
-    //startgame->Update();
-    ground->Update();
-    //grass->Update();
-    turtle->Update();
-    turtlerun->Update();
-    ogre->Update();
-    turtlerun->x_pos+=2;
-    turtlerun->y_pos--;
-    ogre->x_pos+=2;
-    ogre->y_pos--;
-
-    //turtle->HandleInputAction(event);
-
-    turtle->HandleMove();
-
-    //turtle->Update();
-}
-void Game::render()
-{
-	SDL_RenderClear(renderer);
-    //SDL_RenderCopy(renderer, background, NULL, NULL);
-    //background->Render();
-    //startgame->Render();
-    ground->Render();
-    //grass->Render();
-
-    _map->DrawMap();
-    turtle->Render();
-    turtlerun->Render();
-    ogre->Render();
-	SDL_RenderPresent(renderer);
-}
-
 void Game::clean()
 {
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
 }
-void Game::Start()
-{
-    background->Update();
-    startgame->Update();
-    background->Render();
-    startgame->Render();
-    handleEvents();
-    //isRunning=true;
 
-	SDL_RenderPresent(renderer);
-	SDL_Delay(10);
-}
