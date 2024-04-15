@@ -9,15 +9,6 @@ Map::Map()
     grass = TextureManager::LoadTexture("Game Graphics/grass/1.png");
 
     LoadMap("file_map.txt");
-    //LoadNgram("mapNgram.txt");
-    /*for (int i = 0; i < 15; i++)
-    {
-        for (int j = 0; j < 15; j++)
-        {
-            std::cout <<mapn[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }*/
 
     src.x = src.y = 0;
     src.w = dest.w = 36;

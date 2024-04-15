@@ -4,7 +4,6 @@
 #include "Game.hpp"
 #include "TextureManager.hpp"
 #include "GameObject.hpp"
-#include "GameNonogram.hpp"
 
 class Map{
 public:
