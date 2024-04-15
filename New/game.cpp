@@ -13,9 +13,9 @@ int current[15][15];
 int mapn[15][15];
 
 Map *_map;
-Map *_mapNgram;
 
 GameNgram *Ngram;
+GameNgram *sgNgram = new GameNgram();
 
 SDL_Renderer *Game::renderer = nullptr;
 
@@ -57,7 +57,7 @@ void Game::initSDL(const char* WINDOW_TITLE, int x_pos, int y_pos, int SCREEN_WI
     startgame = new GameObject("Game Graphics/playgame.png",620,380,200,90);
 
     ground = new GameObject("Game Graphics/ground.png",0,0,1536,768);
-    //grass = new GameObject("Game Graphics/grass/Asset 1.png",-1,-1,32,30);
+
     turtle = new GameObject("Game Graphics/Character/turtle.png",0,100,65,52);
     turtlerun = new GameObject("Game Graphics/Character/run.png",260,500,50,52);
     ogre = new GameObject("Game Graphics/Character/ogre.png",-10,650,55,58);
@@ -81,6 +81,7 @@ void Game::initSDL(const char* WINDOW_TITLE, int x_pos, int y_pos, int SCREEN_WI
         }
         std::cout << std::endl;
     }
+    sgNgram->Suggest(mapn);
 }
 
 void Game::Start()
@@ -168,7 +169,7 @@ void Game::render()
     ground->Render();
 
     _map->DrawMap();
-    //_map->DrawNgram(0,0,0);
+
     turtle->Render();
     turtlerun->Render();
     ogre->Render();
