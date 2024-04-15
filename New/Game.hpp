@@ -1,4 +1,5 @@
 #pragma once
+#include <fstream>
 
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
@@ -35,6 +36,8 @@ public:
 	void clean();
 	void Start();
 	void ButtonNonogram();
+	bool checkCollision(const SDL_Rect& obj_1, const SDL_Rect& obj_2);
+	void LoadNgram(const char* filepath);
 
 	bool running() { return isRunning; }
 	//bool Nonogram() {return isNonogram;}
@@ -43,7 +46,7 @@ public:
     SDL_Window* window;
 
     bool isRunning = true;
-    bool isNonogram = true;
+    bool isNonogram = false;
 
 private:
 
