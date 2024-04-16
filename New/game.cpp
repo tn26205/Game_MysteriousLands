@@ -9,8 +9,9 @@ GameObject *ogre;
 GameObject *box;
 GameObject *nonogram;
 GameObject *color[15][15];
-int current[15][15];
+int current[15][15]={0};
 int mapn[15][15];
+int clicked[15][15];
 
 Map *_map;
 
@@ -67,7 +68,7 @@ void Game::initSDL(const char* WINDOW_TITLE, int x_pos, int y_pos, int SCREEN_WI
     {
         for (int j = 0; j < 15; j++)
         {
-            color[i][j] = new GameObject("Game Graphics/puzzle/x_black.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
+            color[i][j] = new GameObject("Game Graphics/puzzle/puzzle.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
         }
     }
     _map = new Map();
@@ -138,23 +139,27 @@ void Game::update()
         {
             for (int j = 0; j < 15; j++)
             {
-                if (current[i][j] == 1)
+                if (current[i][j] == 1 && clicked[i][j] != 3)
                 {
                     color[i][j] = new GameObject("Game Graphics/puzzle/black.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
+                    clicked[i][j] = 3;
                 }
-                else if (current[i][j] == 2)
+                else if (current[i][j] == 2 && clicked[i][j] != 3)
 
                 {
                     color[i][j] = new GameObject("Game Graphics/puzzle/red.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
+                    clicked[i][j] = 3;
                 }
-                 else if (current[i][j] == -1)
+                 else if (current[i][j] == -1 && clicked[i][j] != 3)
                 {
                     color[i][j] = new GameObject("Game Graphics/puzzle/x_black.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
+                    clicked[i][j] = 3;
                 }
-                else if (current[i][j] == -2)
+                else if (current[i][j] == -2 && clicked[i][j] != 3)
 
                 {
                     color[i][j] = new GameObject("Game Graphics/puzzle/x_red.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
+                    clicked[i][j] = 3;
                 }
                 color[i][j]->Update();
             }
@@ -176,7 +181,7 @@ void Game::render()
     box->Render();
     if (isNonogram)
     {
-        nonogram->Render();
+        //nonogram->Render();
 
         for (int i = 0; i < 15; i++)
         {
