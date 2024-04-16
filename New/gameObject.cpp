@@ -13,20 +13,6 @@ GameObject::GameObject(const char* texturesheet,/* SDL_Renderer* ren,*/ int x, i
     srcRect.h = h;
 }
 
-void GameObject::HandleMove()
-{
-    destRect.x += x_pos;
-    if(destRect.x < 0 || destRect.x + srcRect.w >= SCREEN_WIDTH)
-    {
-        destRect.x -= x_pos;
-    }
-    destRect.y += y_pos;
-    if(destRect.y < 0 || destRect.y + srcRect.h >= SCREEN_HEIGHT)
-    {
-        destRect.x -= x_pos;
-    }
-}
-
 void GameObject::Update()
 {
 
@@ -39,8 +25,13 @@ void GameObject::Update()
     destRect.h = srcRect.h;
 
 }
-
+void GameObject::free(SDL_Texture *texture)
+{
+    SDL_DestroyTexture(texture);
+    texture=nullptr;
+}
 void GameObject::Render()
 {
-    SDL_RenderCopy(/*renderer*/Game::renderer, objTexture, &srcRect, &destRect);
+    SDL_RenderCopy(Game::renderer, objTexture, &srcRect, &destRect);
 }
+

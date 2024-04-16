@@ -166,7 +166,7 @@ void Game::update()
         }
     }
 
-    turtle->HandleMove();
+    //turtle->HandleMove();
 }
 void Game::render()
 {
@@ -205,16 +205,17 @@ void Game::handleEvents()
                 switch(event.key.keysym.sym)
                     {
                     case SDLK_UP:
-                        turtle->y_pos -= 32;
+                        if(turtle->y_pos > 32) turtle->y_pos -= 32;
                         break;
                     case SDLK_DOWN:
-                        turtle->y_pos += 32;
+                        if(turtle->y_pos + turtle->srcRect.h < SCREEN_HEIGHT) turtle->y_pos += 32;
+                        std::cout << turtle->y_pos + turtle->srcRect.h << " ";
                         break;
                     case SDLK_RIGHT:
-                        turtle->x_pos += 32;
+                        if(turtle->x_pos + turtle->srcRect.w < SCREEN_WIDTH) turtle->x_pos += 32;
                         break;
                     case SDLK_LEFT:
-                        turtle->x_pos -= 32;
+                        if(turtle->x_pos > 16) turtle->x_pos -= 32;
                         break;
                     default:
                         break;
