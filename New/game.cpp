@@ -9,14 +9,17 @@ GameObject *ogre;
 GameObject *box;
 GameObject *nonogram;
 GameObject *color[15][15];
+GameObject *Collision;
+
 int current[15][15]={0};
 int mapn[15][15];
 int clicked[15][15];
 
 Map *_map;
 
-GameNgram *Ngram;
+GameNgram *Ngram = new GameNgram();
 GameNgram *sgNgram = new GameNgram();
+GameNgram *Ngame = new GameNgram();
 
 SDL_Renderer *Game::renderer = nullptr;
 
@@ -53,6 +56,10 @@ void Game::initSDL(const char* WINDOW_TITLE, int x_pos, int y_pos, int SCREEN_WI
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     }
     else logErrorAndExit("CreateRenderer", SDL_GetError());
+
+    if (!Ngame->initTTF(renderer)) {
+        std::cout << "Error" << std::endl;
+    }
 
     background = new GameObject("Game Graphics/newbackground1.png",0,0,1536,768);
     startgame = new GameObject("Game Graphics/playgame.png",620,380,200,90);
@@ -141,13 +148,13 @@ void Game::update()
             {
                 if (current[i][j] == 1 && clicked[i][j] != 3)
                 {
-                    color[i][j] = new GameObject("Game Graphics/puzzle/black.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
+                    color[i][j] = new GameObject("Game Graphics/puzzle/black.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE + 1);
                     clicked[i][j] = 3;
                 }
                 else if (current[i][j] == 2 && clicked[i][j] != 3)
 
                 {
-                    color[i][j] = new GameObject("Game Graphics/puzzle/red.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
+                    color[i][j] = new GameObject("Game Graphics/puzzle/x_red.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
                     clicked[i][j] = 3;
                 }
                  else if (current[i][j] == -1 && clicked[i][j] != 3)
@@ -158,15 +165,13 @@ void Game::update()
                 else if (current[i][j] == -2 && clicked[i][j] != 3)
 
                 {
-                    color[i][j] = new GameObject("Game Graphics/puzzle/x_red.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
+                    color[i][j] = new GameObject("Game Graphics/puzzle/red.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
                     clicked[i][j] = 3;
                 }
                 color[i][j]->Update();
             }
         }
     }
-
-    //turtle->HandleMove();
 }
 void Game::render()
 {
@@ -181,7 +186,8 @@ void Game::render()
     box->Render();
     if (isNonogram)
     {
-        //nonogram->Render();
+        Ngame->renderArrRow(renderer, sgNgram->sg_row);
+        Ngame->renderArrCol(renderer, sgNgram->sg_col);
 
         for (int i = 0; i < 15; i++)
         {
@@ -205,7 +211,9 @@ void Game::handleEvents()
                 switch(event.key.keysym.sym)
                     {
                     case SDLK_UP:
-                        if(turtle->y_pos > 32) turtle->y_pos -= 32;
+                        if(turtle->y_pos > 32){
+                            turtle->y_pos -= 32;
+                        }
                         break;
                     case SDLK_DOWN:
                         if(turtle->y_pos + turtle->srcRect.h < SCREEN_HEIGHT) turtle->y_pos += 32;
@@ -229,7 +237,7 @@ void Game::handleEvents()
                     {
                         isNonogram = true;
                         std::cout << "Nonogram" << std::endl;
-                        GameNgram *Ngram = new GameNgram();
+                        //GameNgram *Ngram = new GameNgram();
 
                     }
                     else if (mouse_x >= nonogram->getX() && mouse_x <= nonogram->getX() + nonogram->getWidth() && mouse_y >= nonogram->getY() && mouse_y <= nonogram->getY() + nonogram->getHeight() && isNonogram)
@@ -265,76 +273,9 @@ void Game::LoadNgram(const char* filepath)
     file.close();
 }
 
-bool Game::checkCollision(const SDL_Rect& obj_1, const SDL_Rect& obj_2)
-{
-    int left_1 = obj_1.x;
-    int right_1 = obj_1.x + obj_1.w;
-    int top_1 = obj_1.y;
-    int bottom_1 = obj_1.y + obj_1.h;
-
-    int left_2 = obj_2.x;
-    int right_2 = obj_2.x + obj_2.w;
-    int top_2 = obj_2.y;
-    int bottom_2 = obj_2.y + obj_2.h;
-
-    if (left_1 > left_2 && left_1 < right_2)
-    {
-        if (top_1 > top_2 && top_1 < bottom_2)
-        {
-          return true;
-        }
-
-        if (bottom_1 > top_2 && bottom_1 < bottom_2)
-        {
-          return true;
-        }
-    }
-    if(right_1 > left_2 && right_1 < right_2){
-        if (top_1 > top_2 && top_1 < bottom_2)
-        {
-            return true;
-        }
-        if (bottom_1 > top_2 && bottom_1 < bottom_2)
-        {
-          return true;
-        }
-    }
-
-    if (left_2 > left_1 && left_2 < right_1)
-    {
-        if (top_2 > top_1 && top_2 < bottom_1)
-        {
-          return true;
-        }
-        if (bottom_2 > top_1 && bottom_2 < bottom_1)
-        {
-          return true;
-        }
-    }
-
-    if (right_2 > left_1 && right_2 < right_1)
-    {
-        if (top_2 > top_1 && top_2 < bottom_1)
-        {
-          return true;
-        }
-        if (bottom_2 > top_1 && bottom_2 < bottom_1)
-        {
-          return true;
-        }
-    }
-
-    if (top_1 == top_2 && right_1 == right_2 && bottom_1 == bottom_2)
-    {
-        return true;
-    }
-
-    return false;
-
-}
-
 void Game::clean()
 {
+    Ngame->closeTTF();
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
