@@ -153,14 +153,14 @@ void GameNgram::closeTTF()
 
 void GameNgram::renderArrRow(SDL_Renderer* renderer, const vector<vector<int>>& arr)
 {
-    SDL_Color textColor = { 0, 0, 0 };
+    SDL_Color textColor = { 225, 225, 225 };
     int text_x;
-    int text_y = 210;
+    int text_y = SG_X_ROW;
     int lineHeight = 35;
     int space = 40;
     for (int t = 0; t < 15; t++) {
         for (int f = 0; f < arr[t].size(); f++) {
-            text_x = 550 + (max_row - arr[t].size() + f + 1) * space;
+            text_x = SG_X_COL + (max_row - arr[t].size() + f + 1) * space;
             string text = to_string(arr[t][f]);
             SDL_Surface* textSurface = TTF_RenderText_Solid(gFont, text.c_str(), textColor);
             if (textSurface != nullptr) {
@@ -179,14 +179,14 @@ void GameNgram::renderArrRow(SDL_Renderer* renderer, const vector<vector<int>>& 
 
 void GameNgram::renderArrCol(SDL_Renderer* renderer, const vector<vector<int>>& arr)
 {
-    SDL_Color textColor = { 0, 0, 0 };
-    int text_x = 605;
+    SDL_Color textColor = { 225, 225, 225 };
+    int text_x = SG_Y_ROW;
     int text_y;
-    int lineHeight = 35;
-    int space = 36;
+    int lineHeight = 30;
+    int space = 35;
     for (int t = 0; t < 15; t++) {
         for (int f = 0; f < arr[t].size(); f++) {
-            text_y = 160 + (max_col - arr[t].size() + f + 1) * lineHeight;
+            text_y = SG_Y_COL + (max_col - arr[t].size() + f + 1) * lineHeight;
             string text = to_string(arr[t][f]);
             SDL_Surface* textSurface = TTF_RenderText_Solid(gFont, text.c_str(), textColor);
             if (textSurface != nullptr) {
