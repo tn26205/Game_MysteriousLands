@@ -8,10 +8,11 @@ GameObject *turtlerun;
 GameObject *ogre;
 GameObject *box;
 GameObject *nonogram;
-GameObject *color[15][15];
+GameObject *color[ROW][COL];
 GameObject *Collision;
 GameObject *heart;
 GameObject *bgrn;
+GameObject *grid;
 
 int current[15][15]={0};
 int mapn[15][15];
@@ -72,12 +73,15 @@ void Game::initSDL(const char* WINDOW_TITLE, int x_pos, int y_pos, int SCREEN_WI
     turtlerun = new GameObject("Game Graphics/Character/run.png",260,500,50,52);
     ogre = new GameObject("Game Graphics/Character/ogre.png",-10,650,55,58);
     box = new GameObject("Game Graphics/Box.png",100,100,61,68);
-    nonogram = new GameObject("Game Graphics/nonogram.png",300,225,525,525);
+    nonogram = new GameObject("Game Graphics/Nonogram/1.png",300,225,525,525);
     bgrn = new GameObject("Game Graphics/Asset 3.png",-3,-10,1572,794);
+    heart = new GameObject("Game Graphics/heart.png",heartPosX , heartPosY, heartWidth,heartHeight);
+    grid = new GameObject("Game Graphics/grid.png",300,225,525,525);
 
-    for (int i = 0; i < 15; i++)
+
+    for (int i = 0; i < ROW; i++)
     {
-        for (int j = 0; j < 15; j++)
+        for (int j = 0; j < COL; j++)
         {
             color[i][j] = new GameObject("Game Graphics/puzzle/puzzle.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
         }
@@ -94,6 +98,7 @@ void Game::initSDL(const char* WINDOW_TITLE, int x_pos, int y_pos, int SCREEN_WI
         std::cout << std::endl;
     }
     sgNgram->Suggest(mapn);
+
 }
 
 void Game::Start()
@@ -138,37 +143,43 @@ void Game::update()
 
     turtlerun->x_pos+=2;
     turtlerun->y_pos--;
-    ogre->x_pos+=2;
-    ogre->y_pos--;
+    //ogre->x_pos+=2;
+    //ogre->y_pos--;
     box->Update();
     bgrn->Update();
+    grid->Update();
 
     if (isNonogram)
     {
         nonogram->Update();
 
-        for (int i = 0; i < 15; i++)
+        for (int i = 0; i < ROW; i++)
         {
-            for (int j = 0; j < 15; j++)
+            for (int j = 0; j < COL; j++)
             {
                 if (current[i][j] == 1 && clicked[i][j] != 3)
                 {
-                    color[i][j] = new GameObject("Game Graphics/puzzle/black.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE + 1);
+                    color[i][j] = new GameObject("Game Graphics/Nonogram/1.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE + 1);
+
+                    color[i][j]->srcRect.x = j * PUZZLE_SIZE;
+                    color[i][j]->srcRect.y = i * PUZZLE_SIZE;
+
                     clicked[i][j] = 3;
+
                 }
-                else if (current[i][j] == 2 && clicked[i][j] != 3)
+                else if (current[i][j] == -2 && clicked[i][j] != 3)
 
                 {
                     color[i][j] = new GameObject("Game Graphics/puzzle/x_red.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
                     clicked[i][j] = 3;
                     _heart--;
                 }
-                 else if (current[i][j] == -1 && clicked[i][j] != 3)
+                 else if (current[i][j] == 2 && clicked[i][j] != 3)
                 {
                     color[i][j] = new GameObject("Game Graphics/puzzle/x_black.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
                     clicked[i][j] = 3;
                 }
-                else if (current[i][j] == -2 && clicked[i][j] != 3)
+                else if (current[i][j] == -1 && clicked[i][j] != 3)
 
                 {
                     color[i][j] = new GameObject("Game Graphics/puzzle/red.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
@@ -182,21 +193,22 @@ void Game::update()
 }
 void Game::render()
 {
+
 	SDL_RenderClear(renderer);
     ground->Render();
 
     _map->DrawMap();
 
     turtle->Render();
-    turtlerun->Render();
-    ogre->Render();
+    //turtlerun->Render();
+    //ogre->Render();
     box->Render();
 
     if (isNonogram)
     {
         bgrn->Render();
         for (int i = 0; i < _heart; i++) {
-            heart = new GameObject("Game Graphics/heart.png",heartPosX + i * (heartWidth + 5), heartPosY, heartWidth,heartHeight);
+            heart->x_pos = heartPosX + i * (heartWidth + 5);
             heart->Update();
             heart->Render();
         }
@@ -204,14 +216,16 @@ void Game::render()
         Ngame->renderArrRow(renderer, sgNgram->sg_row);
         Ngame->renderArrCol(renderer, sgNgram->sg_col);
 
-        for (int i = 0; i < 15; i++)
+        for (int i = 0; i < ROW; i++)
         {
-            for (int j = 0; j < 15; j++)
+            for (int j = 0; j < COL; j++)
             {
                 color[i][j]->Render();
             }
         }
+        grid->Render();
     }
+
 	SDL_RenderPresent(renderer);
 }
 void Game::handleEvents()
@@ -253,12 +267,31 @@ void Game::handleEvents()
                         isNonogram = true;
                         std::cout << "Nonogram" << std::endl;
 
+
                     }
                     else if (mouse_x >= nonogram->getX() && mouse_x <= nonogram->getX() + nonogram->getWidth() && mouse_y >= nonogram->getY() && mouse_y <= nonogram->getY() + nonogram->getHeight() && isNonogram)
                     {
                         Ngram->handleEventNgramClickLeft(mouse_x, mouse_y);
                         std::cout << _heart << std::endl;
-                        if(_heart == 0) isNonogram = false;
+                        if(_heart == 1){
+                            isNonogram = false;
+                            srand(time(0));
+                            x=rand()%1472 + 64;
+                            y=rand() % 640 + 64;
+                            box->x_pos = x;
+                            box->y_pos = y;
+                            box->Update();
+                            LoadNgram("mapNgram.txt");
+                            for (int i = 0; i < 15; i++)
+                            {
+                                for (int j = 0; j < 15; j++)
+                                {
+                                    std::cout << mapn[i][j] << " ";
+                                }
+                                std::cout << std::endl;
+                            }
+                            sgNgram->Suggest(mapn);
+                        }
                     }
                 }
                 else if (event.button.button == SDL_BUTTON_RIGHT)
@@ -266,7 +299,34 @@ void Game::handleEvents()
                     if (mouse_x >= nonogram->getX() && mouse_x <= nonogram->getX() + nonogram->getWidth() && mouse_y >= nonogram->getY() && mouse_y <= nonogram->getY() + nonogram->getHeight() && isNonogram)
                     {
                         Ngram->handleEventNgramClickRight(mouse_x, mouse_y);
-                        if(_heart == 0) isNonogram = false;
+                        if(_heart == 1){
+                            isNonogram = false;
+                            srand(time(0));
+                            x=rand()%1472 + 64;
+                            y=rand() % 640 + 64;
+                            box->x_pos = x;
+                            box->y_pos = y;
+                            box->Update();
+                        }
+                    }
+                }
+                break;
+
+            case SDL_MOUSEMOTION:
+                SDL_GetMouseState(&mouse_x, &mouse_y);
+                if(event.motion.state & SDL_BUTTON(SDL_BUTTON_LEFT)){
+                    if (mouse_x >= nonogram->getX() && mouse_x <= nonogram->getX() + nonogram->getWidth() && mouse_y >= nonogram->getY() && mouse_y <= nonogram->getY() + nonogram->getHeight() && isNonogram)
+                    {
+                        Ngram->handleEventNgramClickLeft(mouse_x, mouse_y);
+                        std::cout << _heart << std::endl;
+                        if(_heart == 1) isNonogram = false;
+                    }
+                }
+                if(event.motion.state & SDL_BUTTON(SDL_BUTTON_RIGHT)){
+                    if (mouse_x >= nonogram->getX() && mouse_x <= nonogram->getX() + nonogram->getWidth() && mouse_y >= nonogram->getY() && mouse_y <= nonogram->getY() + nonogram->getHeight() && isNonogram)
+                    {
+                        Ngram->handleEventNgramClickRight(mouse_x, mouse_y);
+                        if(_heart == 1) isNonogram = false;
                     }
                 }
                 break;
@@ -292,6 +352,25 @@ void Game::LoadNgram(const char* filepath)
 
 void Game::clean()
 {
+    delete background;
+    delete startgame;
+    delete ground;
+    delete turtle;
+    delete turtlerun;
+    delete ogre;
+    delete box;
+    delete nonogram;
+    delete bgrn;
+    delete heart;
+
+    for (int i = 0; i < ROW; i++)
+    {
+        for (int j = 0; j < COL; j++)
+        {
+            delete color[i][j];
+        }
+    }
+    delete _map;
     Ngame->closeTTF();
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);

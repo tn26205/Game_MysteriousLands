@@ -12,9 +12,12 @@
 
 #include <iostream>
 #include <vector>
+#include <time.h>
 
 const int SCREEN_WIDTH = 1535;
 const int SCREEN_HEIGHT = 750;
+const int ROW = 15;
+const int COL = 15;
 
 class Game
 {
@@ -61,5 +64,6 @@ private:
     int heartPosY = 180;
     int heartWidth = 42;
     int heartHeight = 35;
+    int x,y;
 
 };
