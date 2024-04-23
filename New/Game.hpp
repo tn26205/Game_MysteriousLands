@@ -29,10 +29,6 @@ public:
 
     void logErrorAndExit(const char* msg, const char* error);
     void initSDL(const char* WINDOW_TITLE, int x_pos, int y_pos, int SCREEN_WIDTH, int SCREEN_HEIGHT,bool fullScreen);
-    void handleMouse();
-    void handleKeyDownEvent(SDL_Keycode keycode);
-    void handleMousClickEvent(SDL_MouseButtonEvent& buttonEvent);
-    void handleNonogram(int mouse_x, int mouse_y);
     void handleEvents();
 	void update();
 	void render();
@@ -40,6 +36,7 @@ public:
 	void Start();
 	void Nonogram();
 	void LoadNgram(const char* filepath);
+	void ContinuePlay();
 
 	bool running() { return isRunning; }
     static SDL_Renderer* renderer;
@@ -65,5 +62,6 @@ private:
     int heartWidth = 42;
     int heartHeight = 35;
     int x,y;
+    int sumClick = 0;
 
 };
