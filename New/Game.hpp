@@ -1,5 +1,6 @@
 #pragma once
 #include <fstream>
+using namespace std;
 
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
@@ -18,6 +19,7 @@ const int SCREEN_WIDTH = 1535;
 const int SCREEN_HEIGHT = 750;
 const int ROW = 15;
 const int COL = 15;
+const int map_image_ngram = 3;
 
 class Game
 {
@@ -35,7 +37,9 @@ public:
 	void clean();
 	void Start();
 	void Nonogram();
-	void LoadNgram(const char* filepath);
+	void LoadMapNgram(const char* filepath);
+    void LoadNgram(const char* filepath);
+	void ContinuePlay();
 	void RenderImage();
 
 	bool running() { return isRunning; }
@@ -64,5 +68,8 @@ private:
     int heartHeight = 35;
     int x,y;
     int sumClick = 0;
+    string _image_title;
+    string _map_title;
+    int index;
 
 };
