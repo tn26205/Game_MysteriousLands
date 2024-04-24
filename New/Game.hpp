@@ -36,7 +36,7 @@ public:
 	void Start();
 	void Nonogram();
 	void LoadNgram(const char* filepath);
-	void ContinuePlay();
+	void RenderImage();
 
 	bool running() { return isRunning; }
     static SDL_Renderer* renderer;
@@ -45,6 +45,7 @@ public:
 
     bool isRunning = true;
     bool isNonogram = false;
+    bool isPlayNgram = false;
 
     int srcRect_w,srcRect_h;
 
