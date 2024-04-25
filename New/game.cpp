@@ -86,30 +86,11 @@ void Game::initSDL(const char* WINDOW_TITLE, int x_pos, int y_pos, int SCREEN_WI
     grid = new GameObject("Game Graphics/grid.png",300,225,525,525);
     lose = new GameObject("Game Graphics/lose.png",80,150,160,114);
     back_ = new GameObject("Game Graphics/back.png",70,90,145,50);
-    continue_ = new GameObject("Game Graphics/cotinue.png",70,150,144,43);
+    continue_ = new GameObject("Game Graphics/continue.png",70,150,144,43);
 
     _map = new Map();
 
     ContinuePlay();
-
-    /*for (int i = 0; i < ROW; i++)
-    {
-        for (int j = 0; j < COL; j++)
-        {
-            color[i][j] = new GameObject("Game Graphics/puzzle/puzzle.png", j * PUZZLE_SIZE + START_X_GRID, i * PUZZLE_SIZE + START_Y_GRID, PUZZLE_SIZE, PUZZLE_SIZE);
-        }
-    }*/
-
-    /*LoadMapNgram("Map/uet.txt");
-    for (int i = 0; i < 15; i++)
-    {
-        for (int j = 0; j < 15; j++)
-        {
-            std::cout << mapn[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
-    sgNgram->Suggest(mapn);*/
 }
 
 void Game::Start()
@@ -127,6 +108,7 @@ void Game::Start()
         switch (event.type)
         {
             case SDL_QUIT :
+
                 clean();
                 break;
             case SDL_MOUSEBUTTONDOWN:
@@ -198,7 +180,6 @@ void Game::handleEvents()
                     isNonogram = true;
                     isPlayNgram =true;
                     turtle->x_pos += 32;
-                    //ContinuePlay();
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
@@ -218,10 +199,8 @@ void Game::handleEvents()
                         box->Render();
                         SDL_RenderPresent(renderer);
                     }
-                    if(mouse_x >= continue_->getX() && mouse_x <= continue_->getX() + continue_->getWidth() && mouse_y >= continue_->getY() && mouse_y <= continue_->getY() + continue_->getHeight() && isNonogram && sumClick == 225){
-                        isNonogram = true;
-                        isPlayNgram = true;
-                        ContinuePlay();
+                    if(mouse_x >= continue_->getX() && mouse_x <= continue_->getX() + continue_->getWidth() && mouse_y >= continue_->getY() && mouse_y <= continue_->getY() + continue_->getHeight() && isNonogram && isPlayNgram && sumClick == 225 ){
+                        isPlayContinue = true;
                     }
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT)
@@ -287,7 +266,6 @@ void Game::Nonogram()
         grid->Update();
         lose->Update();
         back_->Update();
-        nonogram->Update();
         continue_->Update();
 
         bgrn->Render();
@@ -297,13 +275,10 @@ void Game::Nonogram()
         Ngame->renderArrCol(renderer, sgNgram->sg_col);
 
         if(_heart == 0 ){
+
             lose->Render();
             nonogram->Render();
             isPlayNgram = false;
-        }
-        if(sumClick == 225 ) {
-            nonogram->Render();
-            continue_->Render();
         }
     }
     if (isPlayNgram)
@@ -351,19 +326,20 @@ void Game::Nonogram()
                     _heart--;
                 }
                 color[i][j]->Update();
-            }
-        }
-
-        for (int i = 0; i < ROW; i++)
-        {
-            for (int j = 0; j < COL; j++)
-            {
                 color[i][j]->Render();
             }
         }
-
         grid->Render();
 
+        if(sumClick == 225 ) {
+            if(!isPlayContinue){
+                nonogram->Render();
+                continue_->Render();
+                SDL_RenderPresent(renderer);
+            }
+            else ContinuePlay();
+
+        }
     }
 
     std::cout << "Click:" << sumClick << std:: endl;
@@ -373,12 +349,14 @@ void Game::ContinuePlay()
 {
     _heart = 3;
     srand(time(0));
+    sumClick = 0;
     index = rand() % 3 + 1;
     _image_title = "Game Graphics/Nonogram/" + to_string(index) + ".png";
     _map_title = "Map/" + to_string(index) + ".txt";
     image_title = _image_title.c_str();
     map_title = _map_title.c_str();
     nonogram = new GameObject(image_title,300,225,525,525);
+    nonogram->Update();
     LoadMapNgram(map_title);
     sgNgram->Suggest(mapn);
 
@@ -392,45 +370,44 @@ void Game::ContinuePlay()
             clicked[i][j]=0;
         }
     }
+    isPlayContinue = false;
     std::cout << "image" << image_title << "map" << map_title ;
 }
-void Game::RenderImage()
+
+void Game::del()
 {
-    nonogram->Render();
-    SDL_RenderPresent(renderer);
+    background->~GameObject();
+    startgame->~GameObject();
+    ground->~GameObject();
+    turtle->~GameObject();
+    turtlerun->~GameObject();
+    ogre->~GameObject();
+    box->~GameObject();
+    nonogram->~GameObject();
+    bgrn->~GameObject();
+    heart->~GameObject();
+    bgrn->~GameObject();
+    grid->~GameObject();
+    lose->~GameObject();
+    back_->~GameObject();
+    continue_->~GameObject();
+
+    for (int i     = 0; i < ROW; i++)
+    {
+        for (int j = 0; j < COL; j++)
+        {
+            color[i][j]->~GameObject();
+        }
+    }
+    delete _map;
+    delete mapn;
+    Ngame->closeTTF();
 }
 
 void Game::clean()
 {
-    delete background;
-    delete startgame;
-    delete ground;
-    delete turtle;
-    delete turtlerun;
-    delete ogre;
-    delete box;
-    delete nonogram;
-    delete bgrn;
-    delete heart;
-    delete bgrn;
-    delete grid;
-    delete lose;
-    delete back_;
-    delete mapn;
-    delete continue_;
-
-    for (int i = 0; i < ROW; i++)
-    {
-        for (int j = 0; j < COL; j++)
-        {
-            delete color[i][j];
-        }
-    }
-    delete _map;
-    Ngame->closeTTF();
+    //del();
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
 }
-
-

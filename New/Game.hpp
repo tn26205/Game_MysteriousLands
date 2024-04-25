@@ -40,7 +40,7 @@ public:
 	void LoadMapNgram(const char* filepath);
     void LoadNgram(const char* filepath);
 	void ContinuePlay();
-	void RenderImage();
+	void del();
 
 	bool running() { return isRunning; }
     static SDL_Renderer* renderer;
@@ -50,6 +50,7 @@ public:
     bool isRunning = true;
     bool isNonogram = false;
     bool isPlayNgram = false;
+    bool isPlayContinue = false;
 
     int srcRect_w,srcRect_h;
 
