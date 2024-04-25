@@ -17,11 +17,13 @@ GameObject *lose;
 GameObject *back_;
 GameObject *box_locked;
 GameObject *continue_;
+GameObject *GameOver;
+GameObject *Win;
 
 int current[15][15]={0};
 int mapn[15][15];
 int clicked[15][15];
-vector<string> title;
+vector<int> title;
 
 Map *_map;
 
@@ -87,9 +89,10 @@ void Game::initSDL(const char* WINDOW_TITLE, int x_pos, int y_pos, int SCREEN_WI
     lose = new GameObject("Game Graphics/lose.png",80,150,160,114);
     back_ = new GameObject("Game Graphics/back.png",70,90,145,50);
     continue_ = new GameObject("Game Graphics/continue.png",70,150,144,43);
-
+    GameOver = new GameObject("Game Graphics/GameOver.png",900,100,510,568);
+    Win = new GameObject("Game Graphics/Win.png",900,100,547,501);
     _map = new Map();
-
+    LoadNgram("Nonogram.txt");
     ContinuePlay();
 }
 
@@ -132,6 +135,8 @@ void Game::update()
     ground->Update();
     turtle->Update();
     box->Update();
+    GameOver->Update();
+    Win->Update();
 }
 void Game::render()
 {
@@ -252,9 +257,12 @@ void Game::LoadNgram(const char* filepath)
 {
     std::ifstream file(filepath);
     if(!file.is_open()) return;
-
+    int temp;
+    while(file >> temp){
+        title.push_back(temp);
+    }
     for(int i=0;i<title.size();i++){
-        file >> title[i];
+        std::cout << title[i] << "," << std::endl;
     }
     file.close();
 }
@@ -278,6 +286,7 @@ void Game::Nonogram()
 
             lose->Render();
             nonogram->Render();
+            GameOver->Render();
             isPlayNgram = false;
         }
     }
@@ -335,6 +344,7 @@ void Game::Nonogram()
             if(!isPlayContinue){
                 nonogram->Render();
                 continue_->Render();
+                if(title.size() == 0) Win->Render();
                 SDL_RenderPresent(renderer);
             }
             else ContinuePlay();
@@ -348,17 +358,20 @@ void Game::Nonogram()
 void Game::ContinuePlay()
 {
     _heart = 3;
-    srand(time(0));
+
     sumClick = 0;
-    index = rand() % 3 + 1;
-    _image_title = "Game Graphics/Nonogram/" + to_string(index) + ".png";
-    _map_title = "Map/" + to_string(index) + ".txt";
+    srand(time(0));
+    index = rand() % 3;
+    int t = title[index];
+    _image_title = "Game Graphics/Nonogram/" + to_string(t) + ".png";
+    _map_title = "Map/" + to_string(t) + ".txt";
     image_title = _image_title.c_str();
     map_title = _map_title.c_str();
     nonogram = new GameObject(image_title,300,225,525,525);
     nonogram->Update();
     LoadMapNgram(map_title);
     sgNgram->Suggest(mapn);
+    title.erase(title.begin() + index);
 
     for (int i = 0; i < ROW; i++)
     {
