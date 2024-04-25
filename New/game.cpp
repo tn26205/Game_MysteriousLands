@@ -25,6 +25,8 @@ int mapn[15][15];
 int clicked[15][15];
 vector<int> title;
 
+bool scoreAdded = false;
+
 Map *_map;
 
 GameNgram *Ngram = new GameNgram();
@@ -72,7 +74,18 @@ void Game::initSDL(const char* WINDOW_TITLE, int x_pos, int y_pos, int SCREEN_WI
 
     if (!Ngame->initTTF(renderer)) {
         std::cout << "Error" << std::endl;
+
     }
+    if (Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,4096)==-1)
+    {
+        std::cout << "Error Music" << std::endl;
+    }
+    sound1 =Mix_LoadWAV("music_game.wav");
+    sound2 =Mix_LoadWAV("click_incorrect.wav");
+
+   if(sound1==NULL||sound2==NULL)
+        std::cout << "Error Load Music" << std::endl;
+
 
     background = new GameObject("Game Graphics/newbackground1.png",0,0,1536,768);
     startgame = new GameObject("Game Graphics/playgame.png",620,380,200,90);
@@ -193,7 +206,7 @@ void Game::handleEvents()
                 if(event.button.button == SDL_BUTTON_LEFT){
                     if (mouse_x >= nonogram->getX() && mouse_x <= nonogram->getX() + nonogram->getWidth() && mouse_y >= nonogram->getY() && mouse_y <= nonogram->getY() + nonogram->getHeight() && isNonogram)
                     {
-                        Ngram->handleEventNgramClickLeft(mouse_x, mouse_y);
+                        Ngram->handleEventNgramClickLeft(mouse_x, mouse_y,sound1,sound2);
                         std::cout << _heart << std::endl;
                     }
                     if(mouse_x >= back_->getX() && mouse_x <= back_->getX() + back_->getWidth() && mouse_y >= back_->getY() && mouse_y <= back_->getY() + back_->getHeight() && isNonogram){
@@ -212,7 +225,7 @@ void Game::handleEvents()
                 {
                     if (mouse_x >= nonogram->getX() && mouse_x <= nonogram->getX() + nonogram->getWidth() && mouse_y >= nonogram->getY() && mouse_y <= nonogram->getY() + nonogram->getHeight() && isNonogram)
                     {
-                        Ngram->handleEventNgramClickRight(mouse_x, mouse_y);
+                        Ngram->handleEventNgramClickRight(mouse_x, mouse_y, sound1, sound2);
                     }
                 }
                 break;
@@ -222,14 +235,14 @@ void Game::handleEvents()
                 if(event.motion.state & SDL_BUTTON(SDL_BUTTON_LEFT)){
                     if (mouse_x >= nonogram->getX() && mouse_x <= nonogram->getX() + nonogram->getWidth() && mouse_y >= nonogram->getY() && mouse_y <= nonogram->getY() + nonogram->getHeight() && isNonogram)
                     {
-                        Ngram->handleEventNgramClickLeft(mouse_x, mouse_y);
+                        Ngram->handleEventNgramClickLeft(mouse_x, mouse_y, sound1, sound2);
                         std::cout << _heart << std::endl;
                     }
                 }
                 if(event.motion.state & SDL_BUTTON(SDL_BUTTON_RIGHT)){
                     if (mouse_x >= nonogram->getX() && mouse_x <= nonogram->getX() + nonogram->getWidth() && mouse_y >= nonogram->getY() && mouse_y <= nonogram->getY() + nonogram->getHeight() && isNonogram)
                     {
-                        Ngram->handleEventNgramClickRight(mouse_x, mouse_y);
+                        Ngram->handleEventNgramClickRight(mouse_x, mouse_y,sound1, sound2);
                     }
                 }
                 break;
@@ -345,11 +358,16 @@ void Game::Nonogram()
                 nonogram->Render();
                 continue_->Render();
                 if(title.size() == 0) Win->Render();
-                SDL_RenderPresent(renderer);
+                if (!scoreAdded) {
+                    score += 5;
+                    scoreAdded = true;
+                }
             }
             else ContinuePlay();
-
         }
+
+        std::cout << "score:" << score << std::endl;
+        Ngame->renderScore(renderer, /*Ngame->gFont*//*"font.ttf",*/ score,900,100);
     }
 
     std::cout << "Click:" << sumClick << std:: endl;
@@ -357,8 +375,8 @@ void Game::Nonogram()
 
 void Game::ContinuePlay()
 {
+    scoreAdded = false;
     _heart = 3;
-
     sumClick = 0;
     srand(time(0));
     index = rand() % 3;

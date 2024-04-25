@@ -5,6 +5,7 @@ using namespace std;
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_ttf.h"
+#include "SDL2/SDL_mixer.h"
 
 #include "TextureManager.hpp"
 #include "GameObject.hpp"
@@ -14,6 +15,7 @@ using namespace std;
 #include <iostream>
 #include <vector>
 #include <time.h>
+#include <cstdlib>
 
 const int SCREEN_WIDTH = 1535;
 const int SCREEN_HEIGHT = 750;
@@ -44,6 +46,8 @@ public:
 
 	bool running() { return isRunning; }
     static SDL_Renderer* renderer;
+    Mix_Chunk *sound1;
+    Mix_Chunk *sound2;
 
     SDL_Window* window;
 
@@ -63,6 +67,8 @@ private:
     int x_value = 32;
 
     int _heart = 3;
+    int _heart1 = 2;
+    int _heart2 = 3;
     int heartPosX = 60;
     int heartPosY = 180;
     int heartWidth = 42;
@@ -72,5 +78,5 @@ private:
     string _image_title;
     string _map_title;
     int index;
-
+    int score = 0;
 };

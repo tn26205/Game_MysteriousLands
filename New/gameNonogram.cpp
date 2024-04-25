@@ -15,15 +15,21 @@ GameNgram::GameNgram()
 
 GameNgram::~GameNgram()
 {}
-void GameNgram::handleEventNgramClickLeft(int &mouse_x, int &mouse_y)
+void GameNgram::handleEventNgramClickLeft(int &mouse_x, int &mouse_y,Mix_Chunk* sound1, Mix_Chunk *sound2)
 {
     std::cout << "Click left: " << mouse_x << " " << mouse_y << std::endl;
     int pos_x = (int)((mouse_y - START_Y_GRID) / PUZZLE_SIZE);
     int pos_y = (int)((mouse_x - START_X_GRID) / PUZZLE_SIZE);
     std::cout << pos_x << " " << pos_y << std::endl;
 
-    if (mapn[pos_x][pos_y] == 1) current[pos_x][pos_y] = 1;
-    else current[pos_x][pos_y] = 2;
+    if (mapn[pos_x][pos_y] == 1){
+        current[pos_x][pos_y] = 1;
+         Mix_PlayChannel(-1,sound1,0);
+    }
+    else{
+        current[pos_x][pos_y] = -2;
+        Mix_PlayChannel(-1,sound2,0);
+    }
 
     for (int i = 0; i < 15; i++)
     {
@@ -35,17 +41,21 @@ void GameNgram::handleEventNgramClickLeft(int &mouse_x, int &mouse_y)
     }
 }
 
-void GameNgram::handleEventNgramClickRight(int &mouse_x, int &mouse_y)
+void GameNgram::handleEventNgramClickRight(int &mouse_x, int &mouse_y,Mix_Chunk *sound1, Mix_Chunk *sound2)
 {
     std::cout << "Click right: " << mouse_x << " " << mouse_y << std::endl;
     int pos_x = (int)((mouse_y - START_Y_GRID) / PUZZLE_SIZE);
     int pos_y = (int)((mouse_x - START_X_GRID) / PUZZLE_SIZE);
     std::cout << pos_x << " " << pos_y << std::endl;
 
-    if (mapn[pos_x][pos_y] == 0)
+    if (mapn[pos_x][pos_y] == 0){
+         current[pos_x][pos_y] = 2;
+         Mix_PlayChannel(-1,sound1,0);
+    }
+    else{
          current[pos_x][pos_y] = -1;
-    else
-         current[pos_x][pos_y] = -2;
+         Mix_PlayChannel(-1,sound2,0);
+    }
 
     for (int i = 0; i < 15; i++)
     {
@@ -201,4 +211,37 @@ void GameNgram::renderArrCol(SDL_Renderer* renderer, const vector<vector<int>>& 
         }
         text_x += space;
     }
+}
+
+void GameNgram::renderScore(SDL_Renderer* renderer, int score, int x, int y) {
+
+    std::string scoreText = "Score: " + std::to_string(score);
+
+    TTF_Font* font = TTF_OpenFont("font.ttf", 48);
+
+    SDL_Color textColor = {0, 0, 0, 0};
+
+    SDL_Surface* textSurface = TTF_RenderText_Solid(font, scoreText.c_str(), textColor);
+
+    if (!textSurface) {
+        SDL_Log("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
+        return;
+    }
+
+    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    if (!textTexture) {
+        SDL_Log("Unable to create text texture! SDL Error: %s\n", SDL_GetError());
+        SDL_FreeSurface(textSurface);
+        return;
+    }
+
+    int textWidth = textSurface->w;
+    int textHeight = textSurface->h;
+
+    SDL_Rect dstRect = {x, y, textWidth, textHeight};
+
+    SDL_RenderCopy(renderer, textTexture, NULL, &dstRect);
+
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(textTexture);
 }
