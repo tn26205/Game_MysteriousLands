@@ -103,7 +103,7 @@ void Game::initSDL(const char* WINDOW_TITLE, int x_pos, int y_pos, int SCREEN_WI
     back_ = new GameObject("Game Graphics/back.png",70,90,145,50);
     continue_ = new GameObject("Game Graphics/continue.png",70,150,144,43);
     GameOver = new GameObject("Game Graphics/GameOver.png",900,100,510,568);
-    Win = new GameObject("Game Graphics/Win.png",900,100,547,501);
+    Win = new GameObject("Game Graphics/Win.png",875,150,547,501);
     _map = new Map();
     LoadNgram("Nonogram.txt");
     ContinuePlay();
@@ -296,7 +296,7 @@ void Game::Nonogram()
         Ngame->renderArrCol(renderer, sgNgram->sg_col);
 
         if(_heart == 0 ){
-
+            Ngame->renderScore(renderer, score,850,75);
             lose->Render();
             nonogram->Render();
             GameOver->Render();
@@ -367,10 +367,12 @@ void Game::Nonogram()
         }
 
         std::cout << "score:" << score << std::endl;
-        Ngame->renderScore(renderer, /*Ngame->gFont*//*"font.ttf",*/ score,900,100);
+        Ngame->renderScore(renderer, /*Ngame->gFont*//*"font.ttf",*/ score,850,75);
     }
 
     std::cout << "Click:" << sumClick << std:: endl;
+    std::cout << "Title:" << title.size() << std::endl;
+    std::cout << title[3];
 }
 
 void Game::ContinuePlay()
@@ -379,7 +381,8 @@ void Game::ContinuePlay()
     _heart = 3;
     sumClick = 0;
     srand(time(0));
-    index = rand() % 3;
+    int random = rand() % title.size() + 1;
+    index = random - 1;
     int t = title[index];
     _image_title = "Game Graphics/Nonogram/" + to_string(t) + ".png";
     _map_title = "Map/" + to_string(t) + ".txt";
@@ -423,7 +426,7 @@ void Game::del()
     back_->~GameObject();
     continue_->~GameObject();
 
-    for (int i     = 0; i < ROW; i++)
+    for (int i  = 0; i < ROW; i++)
     {
         for (int j = 0; j < COL; j++)
         {
@@ -433,11 +436,20 @@ void Game::del()
     delete _map;
     delete mapn;
     Ngame->closeTTF();
+    if (sound1 != nullptr) {
+        Mix_FreeChunk(sound1);
+        sound1 = nullptr;
+    }
 }
 
 void Game::clean()
 {
     //del();
+    Ngame->closeTTF();
+    if (sound1 != nullptr) {
+        Mix_FreeChunk(sound1);
+        sound1 = nullptr;
+    }
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
