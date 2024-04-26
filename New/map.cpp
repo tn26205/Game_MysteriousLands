@@ -1,18 +1,14 @@
 #include "Map.hpp"
 
-extern const int START_X_GRID;
-extern const int START_X_GRID;
-extern const int PUZZLE_SIZE;
-
 Map::Map()
 {
-    grass = TextureManager::LoadTexture("Game Graphics/grass/1.png");
+    grass = TextureManager::LoadTexture("Game Graphics/grass/2.png");
 
     LoadMap("Map/file_map.txt");
 
     src.x = src.y = 0;
-    src.w = dest.w = 36;
-    src.h = dest.h = 34;
+    src.w = dest.w = 35;
+    src.h = dest.h = 35;
 
     dest.x = dest.y = 0;
 }
@@ -57,4 +53,3 @@ void Map::DrawMap()
         }
     }
 }
-

@@ -95,13 +95,13 @@ void Game::initSDL(const char* WINDOW_TITLE, int x_pos, int y_pos, int SCREEN_WI
     turtle = new GameObject("Game Graphics/Character/turtle.png",0,100,64,52);
     turtlerun = new GameObject("Game Graphics/Character/run.png",260,500,50,52);
     ogre = new GameObject("Game Graphics/Character/ogre.png",-10,650,55,58);
-    box = new GameObject("Game Graphics/Box/Box.png",100,100,148,100);
+    box = new GameObject("Game Graphics/Box/Box.png",500,300,148,100);
     bgrn = new GameObject("Game Graphics/Asset 3.png",-3,-10,1572,794);
     heart = new GameObject("Game Graphics/heart.png",heartPosX , heartPosY, heartWidth,heartHeight);
     grid = new GameObject("Game Graphics/grid.png",300,225,525,525);
     lose = new GameObject("Game Graphics/lose.png",80,150,160,114);
-    back_ = new GameObject("Game Graphics/back.png",70,90,145,50);
-    continue_ = new GameObject("Game Graphics/continue.png",70,150,144,43);
+    back_ = new GameObject("Game Graphics/back.png",70,120,145,50);
+    continue_ = new GameObject("Game Graphics/continue.png",70,180,144,43);
     GameOver = new GameObject("Game Graphics/GameOver.png",900,100,510,568);
     Win = new GameObject("Game Graphics/Win.png",875,150,547,501);
     _map = new Map();
@@ -182,7 +182,6 @@ void Game::handleEvents()
                         break;
                     case SDLK_DOWN:
                         if(turtle->y_pos + turtle->srcRect.h < SCREEN_HEIGHT) turtle->y_pos += 32;
-                        std::cout << turtle->y_pos + turtle->srcRect.h << " ";
                         break;
                     case SDLK_RIGHT:
                         if(turtle->x_pos + turtle->srcRect.w < SCREEN_WIDTH) turtle->x_pos += 32;
@@ -207,7 +206,6 @@ void Game::handleEvents()
                     if (mouse_x >= nonogram->getX() && mouse_x <= nonogram->getX() + nonogram->getWidth() && mouse_y >= nonogram->getY() && mouse_y <= nonogram->getY() + nonogram->getHeight() && isNonogram)
                     {
                         Ngram->handleEventNgramClickLeft(mouse_x, mouse_y,sound1,sound2);
-                        std::cout << _heart << std::endl;
                     }
                     if(mouse_x >= back_->getX() && mouse_x <= back_->getX() + back_->getWidth() && mouse_y >= back_->getY() && mouse_y <= back_->getY() + back_->getHeight() && isNonogram){
                         isNonogram = false;
@@ -236,7 +234,6 @@ void Game::handleEvents()
                     if (mouse_x >= nonogram->getX() && mouse_x <= nonogram->getX() + nonogram->getWidth() && mouse_y >= nonogram->getY() && mouse_y <= nonogram->getY() + nonogram->getHeight() && isNonogram)
                     {
                         Ngram->handleEventNgramClickLeft(mouse_x, mouse_y, sound1, sound2);
-                        std::cout << _heart << std::endl;
                     }
                 }
                 if(event.motion.state & SDL_BUTTON(SDL_BUTTON_RIGHT)){
@@ -366,13 +363,8 @@ void Game::Nonogram()
             else ContinuePlay();
         }
 
-        std::cout << "score:" << score << std::endl;
-        Ngame->renderScore(renderer, /*Ngame->gFont*//*"font.ttf",*/ score,850,75);
+        Ngame->renderScore(renderer, score,850,75);
     }
-
-    std::cout << "Click:" << sumClick << std:: endl;
-    std::cout << "Title:" << title.size() << std::endl;
-    std::cout << title[3];
 }
 
 void Game::ContinuePlay()
@@ -405,7 +397,6 @@ void Game::ContinuePlay()
         }
     }
     isPlayContinue = false;
-    std::cout << "image" << image_title << "map" << map_title ;
 }
 
 void Game::del()

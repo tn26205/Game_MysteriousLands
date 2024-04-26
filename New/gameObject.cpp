@@ -44,5 +44,3 @@ bool GameObject::checkCollision(const GameObject* obj_1, const GameObject* obj_2
             obj_1->destRect.y < obj_2->destRect.y + obj_2->destRect.h &&
             obj_1->destRect.y + obj_1->destRect.h > obj_2->destRect.y);
 }
-
-

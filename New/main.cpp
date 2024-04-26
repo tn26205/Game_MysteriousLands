@@ -1,7 +1,7 @@
 #include "Game.hpp"
 SDL_Window *window;
-const int SCREEN_WIDTH = 1536;
-const int SCREEN_HEIGHT = 768;
+//const int SCREEN_WIDTH = 1536;
+//const int SCREEN_HEIGHT = 768;
 
 const char *WINDOW_TITLE = "MY GAME";
 
@@ -18,7 +18,9 @@ int main(int argc, char* argv[])
 
     Uint32 frameStart;
     int frameTime;
+
     game->isRunning = false;
+
     while(true){
 
         frameStart = SDL_GetTicks();
@@ -29,7 +31,6 @@ int main(int argc, char* argv[])
         {
             game->update();
             game->render();
-
             game->handleEvents();
         }
 
