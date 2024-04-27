@@ -4,7 +4,6 @@ Lớp: K68J
 Trường Đại học Công Nghệ
 
 [ToC]
-
 ### Ý tưởng: Xây dựng theo luật chơi của game Nonogram
 #### Ban đầu:
 >Cho nhân vật di chuyển -> gặp vật cản -> chơi các map của nonogram. 
@@ -24,8 +23,8 @@ Trường Đại học Công Nghệ
 > - [X] Mỗi map sẽ được khởi tạo 3 mạng. Nếu chọn sai một ô thì sẽ mất một mạng.
 > - [X] Tạo sự kiện giữ và kéo chuột để thuận tiện cho người chơi thay vì phải ấn từng ô một.
 > - [X] Các map được random mà không theo thứ tự cố định để nếu chơi thua muốn chơi lại thì sẽ không gây nhàm chán
-> - [X] Các ô sai sẽ được hiển thị khác với các ô còn 
-> - [X] 
+> - [X] Các ô sai sẽ được hiển thị khác với các ô còn lại
+> - [X] Có grid đậm chia 5 ô một theo hàng và cột
 
 ## Luật chơi và cấu trúc game(source code):
 - Khi nhân vật di chuyển (bằng các phím mũi tên ⬅➡⬆ ⬇ va chạm với rương sẽ bắt đầu chơi game logic.
@@ -70,7 +69,7 @@ Trường Đại học Công Nghệ
 ![Screenshot 2024-04-27 021911](https://hackmd.io/_uploads/Sk4-xFK-C.png)
 
 - Khi click hết 225 ô mà vẫn còn mạng thì thắng 1 map, được cộng 5 điểm, sau đó hiện nút continue, nếu click vào continue thì sẽ chơi map tiếp theo.
-:pushpin: isContinue = true -> hàm *ContinuePlay()* trong game.cpp
+📌 isContinue = true -> hàm *ContinuePlay()* trong game.cpp
 
 ![image](https://hackmd.io/_uploads/S1oKWsKbC.png)
 
@@ -84,7 +83,7 @@ Trường Đại học Công Nghệ
 - rand(), sinh số ngãu nhiên : random map
 - Vòng lặp
 - string: tên map,ảnh
-- Đọc
+- Đọc file 
 ## Nguồn tham khảo:
 SDL: https://lazyfoo.net/tutorials/SDL/index.php
 
@@ -94,8 +93,10 @@ Image:
   
 Âm thanh: https://pixabay.com/vi/sound-effects/search/incorrect/
 
+Logic game: tự viết 
+
 > Game có thể chưa được hoàn thiện cần được cải thiện nhung đây là dự án mình tự làm nên khá hài lòng về nó.
 > Game có thể được nâng cấp thêm nhiều map...
 
- Link demo:
+ Link demo: https://www.youtube.com/watch?v=fnGmcudBfzA
 
